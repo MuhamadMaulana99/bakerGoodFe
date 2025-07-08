@@ -353,30 +353,30 @@ export default function TrackPage() {
 
                 {/* 📋 Pengaduan Terbaru / Filter */}
 
-                {todayComplaints?.length !== 0 && (
-                    <Card>
-                        <CardHeader>
-                            <div className="flex justify-between items-center">
-                                <div>
-                                    <CardTitle>Pengaduan Terbaru</CardTitle>
-                                    <CardDescription>
-                                        Ringkasan pengaduan yang baru saja dikirim
-                                    </CardDescription>
-                                </div>
-                                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                    <SelectTrigger className="w-40">
-                                        <SelectValue placeholder="Pilih status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">Semua Status</SelectItem>
-                                        <SelectItem value="Masuk">Menunggu</SelectItem>
-                                        <SelectItem value="Diproses">Sedang Diproses</SelectItem>
-                                        <SelectItem value="Selesai">Selesai</SelectItem>
-                                        <SelectItem value="Ditolak">Ditolak</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                <Card>
+                    <CardHeader>
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <CardTitle>Pengaduan Terbaru</CardTitle>
+                                <CardDescription>
+                                    Ringkasan pengaduan yang baru saja dikirim
+                                </CardDescription>
                             </div>
-                        </CardHeader>
+                            <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                <SelectTrigger className="w-40">
+                                    <SelectValue placeholder="Pilih status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">Semua Status</SelectItem>
+                                    <SelectItem value="Masuk">Menunggu</SelectItem>
+                                    <SelectItem value="Diproses">Sedang Diproses</SelectItem>
+                                    <SelectItem value="Selesai">Selesai</SelectItem>
+                                    <SelectItem value="Ditolak">Ditolak</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </CardHeader>
+                    {todayComplaints?.length !== 0 && (
                         <CardContent>
                             {isLoading ? (
                                 <p className="text-center py-8 text-gray-500">Memuat...</p>
@@ -418,8 +418,8 @@ export default function TrackPage() {
                                 </div>
                             )}
                         </CardContent>
-                    </Card>
-                )}
+                    )}
+                </Card>
                 {/* <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
