@@ -42,6 +42,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
+    "compress.js": "^2.1.2",
     "crypto-browserify": "^3.12.1",
     "date-fns": "latest",
     "embla-carousel-react": "8.5.1",

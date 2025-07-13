@@ -56,7 +56,8 @@ interface ComplaintForm {
   email: string;
   contact: string;
   description: string;
-  image?: string; // base64 string (opsional)
+  image?: any; // base64 string (opsional)
+  imageName: any;
   date_occurrence: string; // dalam format YYYY-MM-DD
   status: string;
 }
@@ -70,11 +71,12 @@ export default function HomePage() {
     contact: "",
     email: "",
     description: "",
-    image: "",
+    image: null,
+    imageName: "",
     date_occurrence: "",
     status: "Masuk",
   });
-  // console.log(formData, "formData");
+  console.log(formData, "formData");
   const [trackingCode, setTrackingCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -145,7 +147,6 @@ export default function HomePage() {
     try {
       const url = `${import.meta.env.VITE_PUBLIC_API_URL}/products`;
       const response = await axios.get(url);
-      console.log("Response diterima:", response?.data); // Debug 3
       setIsLoading(false);
       setDatasProduct(response.data);
     } catch (err) {
@@ -160,7 +161,6 @@ export default function HomePage() {
     try {
       const url = `${import.meta.env.VITE_PUBLIC_API_URL}/categories`;
       const response = await axios.get(url);
-      console.log("Response diterima category:", response?.data); // Debug 3
       setIsLoading(false);
       setDatasCategody(response.data);
     } catch (err) {
@@ -171,13 +171,11 @@ export default function HomePage() {
     }
   };
 
-  function isValidWithException(
-    obj: Record<string, any>,
-  ): boolean {
+  function isValidWithException(obj: Record<string, any>): boolean {
     return Object.entries(obj).every(([key, value]) => {
-      if (key === "image") return true
-      if (key === "user_id") return true
-      return Boolean(value)
+      if (key === "image" || key === "imageName") return true;
+      if (key === "user_id") return true;
+      return Boolean(value);
     });
   }
 
@@ -193,8 +191,8 @@ export default function HomePage() {
       image: formData?.image,
       date_occurrence: formData?.date_occurrence,
       status: "Masuk",
-    }
-    if (!isValidWithException(payload)) return
+    };
+    if (!isValidWithException(payload)) return;
     setIsLoading(true);
     try {
       const url = `${import.meta.env.VITE_PUBLIC_API_URL}/complaints`;
@@ -207,9 +205,10 @@ export default function HomePage() {
         contact: "",
         email: "",
         description: "",
-        image: "",
+        image: null,
+        imageName: "",
         date_occurrence: "",
-        status: "",
+        status: "Masuk",
       });
       setSubmitted(true);
       toast.success("Pengaduan berhasil");
@@ -267,9 +266,10 @@ export default function HomePage() {
                     contact: "",
                     email: "",
                     description: "",
-                    image: "",
+                    image: null,
+                    imageName: "",
                     date_occurrence: "",
-                    status: "",
+                    status: "Masuk",
                   });
                 }}
                 variant="outline"
@@ -287,15 +287,15 @@ export default function HomePage() {
     );
   }
 
-  console.log(formData)
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <header className="bg-white shadow-sm border-b sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Kayu Manis Baked Goods</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Kayu Manis Baked Goods
+              </h1>
             </div>
             <nav className="flex space-x-4">
               <Link to="/track">
@@ -537,7 +537,7 @@ export default function HomePage() {
                               onClick={() =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  image: "",
+                                  image: null,
                                   imageName: "",
                                 }))
                               }
@@ -556,7 +556,9 @@ export default function HomePage() {
                   type="submit"
                   className="w-full"
                   onClick={handleSubmitComplaints}
-                  disabled={!isValidWithException(formData) || isSubmitting || isLoading}
+                  disabled={
+                    !isValidWithException(formData) || isSubmitting || isLoading
+                  }
                 >
                   {isSubmitting ? "Mengirim..." : "Kirim Pengaduan"}
                 </Button>
@@ -589,7 +591,7 @@ export default function HomePage() {
                 <Link to={`/track?code=${trackingCode}`}>
                   <Button
                     className="w-full"
-                  // disabled={!trackingCode}
+                    // disabled={!trackingCode}
                   >
                     Lacak Status
                   </Button>
