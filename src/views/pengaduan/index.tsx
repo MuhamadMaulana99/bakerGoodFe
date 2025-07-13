@@ -188,7 +188,7 @@ export default function HomePage() {
       contact: formData?.contact,
       email: formData?.email,
       description: formData?.description,
-      image: formData?.image,
+      image: null,
       date_occurrence: formData?.date_occurrence,
       status: "Masuk",
     };
