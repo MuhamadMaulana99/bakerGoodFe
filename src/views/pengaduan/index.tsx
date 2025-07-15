@@ -34,7 +34,7 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
-import { format, isValid } from "date-fns";
+import { format} from "date-fns";
 import { Link } from "react-router-dom";
 import { handleError } from "../../helper";
 import axios from "axios";
@@ -76,7 +76,7 @@ export default function HomePage() {
     date_occurrence: "",
     status: "Masuk",
   });
-  console.log(formData, "formData");
+  // console.log(formData, "formData");
   const [trackingCode, setTrackingCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -289,16 +289,16 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <header className="bg-white shadow-sm border-b sticky top-0">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900 sm:text-xl md:text-3xl lg:text-4xl">
                 Kayu Manis Baked Goods
               </h1>
             </div>
             <nav className="flex space-x-4">
-              <Link to="/track">
+              <Link to="/track" className="hidden sm:block">
                 <Button variant="ghost" className="flex items-center gap-2">
                   <Search className="w-4 h-4" />
                   Lacak Pengaduan

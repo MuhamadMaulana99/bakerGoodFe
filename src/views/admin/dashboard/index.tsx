@@ -19,6 +19,8 @@ import {
     Package,
     Tag,
     LogOut,
+    Menu,
+    X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -40,13 +42,13 @@ export default function AdminDashboard() {
     const [data, setData] = useState<any>({});
     const [dataComplaints, setDataConplaints] = useState<any>([]);
     const [error, setError] = useState("");
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
 
     const getAllProducts = async () => {
         setIsLoading(true);
         try {
             const response = await fetchApi().get("/complaints/report");
-            // console.log(response, 'sss')
             setData(response?.data?.data);
             setIsLoading(false);
         } catch (error) {
@@ -55,16 +57,16 @@ export default function AdminDashboard() {
             throw error;
         }
     };
+
     const getDatasCategory = async () => {
         setIsLoading(true);
         try {
             const url = `${import.meta.env.VITE_PUBLIC_API_URL}/categories`;
             const response = await axios.get(url);
-            // console.log("Response diterima:", response?.data); // Debug 3
             setIsLoading(false);
             setDatasCategody(response.data);
         } catch (err) {
-            console.error("Error saat fetching:", err); // Debug 4
+            console.error("Error saat fetching:", err);
             setDatasCategody([]);
             setIsLoading(false);
             handleError(err);
@@ -87,6 +89,10 @@ export default function AdminDashboard() {
     const handleLogout = () => {
         localStorage.removeItem("adminAuth");
         navigate("/admin");
+    };
+
+    const toggleMobileMenu = () => {
+        setMobileMenuOpen(!mobileMenuOpen);
     };
 
     if (!isAuthenticated) {
@@ -124,11 +130,26 @@ export default function AdminDashboard() {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
-            <header className="bg-white shadow-sm border-b">
+            <header className="bg-white shadow-sm border-b sticky top-0 z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
-                        <h1 className="text-2xl font-bold text-gray-900">Dasbor Admin</h1>
-                        <nav className="flex items-center space-x-4">
+                        <div className="flex items-center">
+                            {/* Mobile menu button */}
+                            <button
+                                onClick={toggleMobileMenu}
+                                className="md:hidden p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
+                            >
+                                {mobileMenuOpen ? (
+                                    <X className="h-6 w-6" />
+                                ) : (
+                                    <Menu className="h-6 w-6" />
+                                )}
+                            </button>
+                            <h1 className="text-xl md:text-2xl font-bold text-gray-900 ml-2 md:ml-0">
+                                Dasbor Admin
+                            </h1>
+                        </div>
+                        <nav className="hidden md:flex items-center space-x-4">
                             <Link to="/admin/complaints">
                                 <Button variant="ghost">Pengaduan</Button>
                             </Link>
@@ -147,16 +168,62 @@ export default function AdminDashboard() {
                                 className="flex items-center gap-2"
                             >
                                 <LogOut className="w-4 h-4" />
-                                Keluar
+                                <span className="hidden sm:inline">Keluar</span>
                             </Button>
                         </nav>
+                        <div className="md:hidden">
+                            <Button
+                                variant="outline"
+                                onClick={handleLogout}
+                                className="flex items-center gap-2"
+                                size="sm"
+                            >
+                                <LogOut className="w-4 h-4" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </header>
 
-            <div className="max-w-7xl mx-auto p-6">
+            {/* Mobile menu */}
+            {mobileMenuOpen && (
+                <div className="md:hidden bg-white shadow-md">
+                    <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                        <Link
+                            to="/admin/complaints"
+                            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                            onClick={toggleMobileMenu}
+                        >
+                            Pengaduan
+                        </Link>
+                        <Link
+                            to="/admin/products"
+                            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                            onClick={toggleMobileMenu}
+                        >
+                            Produk
+                        </Link>
+                        <Link
+                            to="/admin/categories"
+                            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                            onClick={toggleMobileMenu}
+                        >
+                            Kategori
+                        </Link>
+                        <Link
+                            to="/admin/reports"
+                            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                            onClick={toggleMobileMenu}
+                        >
+                            Laporan
+                        </Link>
+                    </div>
+                </div>
+            )}
+
+            <div className="max-w-7xl mx-auto p-4 sm:p-6">
                 {/* Ringkasan Statistik */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
                     <Card>
                         <CardHeader className="flex justify-between pb-2">
                             <CardTitle className="text-sm font-medium">
@@ -168,10 +235,6 @@ export default function AdminDashboard() {
                             <div className="text-2xl font-bold">
                                 {data?.summary?.totalComplaints}
                             </div>
-                            {/* <p className="text-xs text-muted-foreground">
-                +{data?.summary?.thisMonth - data?.summary?.lastMonth} dari
-                bulan lalu
-              </p> */}
                         </CardContent>
                     </Card>
 
@@ -218,7 +281,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Grafik Bulanan & Kategori */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -232,14 +295,14 @@ export default function AdminDashboard() {
                         <CardContent>
                             {data?.monthly?.map((item: any, index: number) => (
                                 <div key={index} className="flex items-center gap-4 mb-2">
-                                    <div className="w-12">{item.month}</div>
+                                    <div className="w-12 text-sm">{item.month}</div>
                                     <div className="flex-1 bg-gray-200 h-2 rounded-full">
                                         <div
                                             className="bg-blue-600 h-2 rounded-full"
                                             style={{ width: `${(item.complaints / 70) * 100}%` }}
                                         />
                                     </div>
-                                    <div className="w-12 text-right">{item.complaints}</div>
+                                    <div className="w-12 text-right text-sm">{item.complaints}</div>
                                 </div>
                             ))}
                         </CardContent>
@@ -276,42 +339,42 @@ export default function AdminDashboard() {
                     </Card>
                 </div>
 
-                <div className="">
+                <div className="mb-6 sm:mb-8">
                     {dataComplaints.map((complaint: any) => (
                         <div
                             key={complaint.id}
-                            className="p-4 border rounded-lg flex justify-between items-center hover:bg-gray-50"
+                            className="p-3 sm:p-4 border rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-gray-50 mb-2"
                         >
-                            <div>
-                                <div className="flex items-center gap-4 mb-2">
-                                    <h4 className="font-medium">
+                            <div className="w-full">
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
+                                    <h4 className="font-medium text-sm sm:text-base">
                                         {complaint.code_complaint}
                                     </h4>
                                     <Badge className={getStatusColor(complaint.status)}>
                                         {complaint.status}
                                     </Badge>
-                                    {/* <Badge className={getPriorityColor(complaint.priority)}>
-                        {complaint.priority}
-                      </Badge> */}
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                                     <div>
-                                        <Users className="inline w-4 h-4 mr-1" />{" "}
+                                        <Users className="inline w-3 h-3 sm:w-4 sm:h-4 mr-1" />{" "}
                                         {complaint.customer_name}
                                     </div>
                                     <div>
-                                        <Package className="inline w-4 h-4 mr-1" />{" "}
+                                        <Package className="inline w-3 h-3 sm:w-4 sm:h-4 mr-1" />{" "}
                                         {complaint?.product?.product_name}
                                     </div>
                                     <div>
-                                        <Tag className="inline w-4 h-4 mr-1" />{" "}
+                                        <Tag className="inline w-3 h-3 sm:w-4 sm:h-4 mr-1" />{" "}
                                         {complaint.category?.category_name}
                                     </div>
                                     <div>{complaint.date_occurrence}</div>
                                 </div>
                             </div>
-                            <Link to={`/admin/complaints/${complaint.id}`}>
-                                <Button variant="outline" size="sm">
+                            <Link 
+                                to={`/admin/complaints/${complaint.id}`}
+                                className="mt-2 sm:mt-0 w-full sm:w-auto"
+                            >
+                                <Button variant="outline" size="sm" className="w-full sm:w-auto">
                                     Lihat
                                 </Button>
                             </Link>
@@ -319,16 +382,15 @@ export default function AdminDashboard() {
                     ))}
                 </div>
 
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     <Card className="hover:shadow-md cursor-pointer">
                         <Link to="/admin/complaints">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <FileText className="w-5 h-5" />
+                                <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                                    <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
                                     Kelola Pengaduan
                                 </CardTitle>
-                                <CardDescription>
+                                <CardDescription className="text-xs sm:text-sm">
                                     Lihat dan tanggapi pengaduan pelanggan
                                 </CardDescription>
                             </CardHeader>
@@ -338,11 +400,13 @@ export default function AdminDashboard() {
                     <Card className="hover:shadow-md cursor-pointer">
                         <Link to="/admin/products">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <Package className="w-5 h-5" />
+                                <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                                    <Package className="w-4 h-4 sm:w-5 sm:h-5" />
                                     Kelola Produk
                                 </CardTitle>
-                                <CardDescription>Tambah, ubah, dan atur produk</CardDescription>
+                                <CardDescription className="text-xs sm:text-sm">
+                                    Tambah, ubah, dan atur produk
+                                </CardDescription>
                             </CardHeader>
                         </Link>
                     </Card>
@@ -350,11 +414,13 @@ export default function AdminDashboard() {
                     <Card className="hover:shadow-md cursor-pointer">
                         <Link to="/admin/reports">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <TrendingUp className="w-5 h-5" />
+                                <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                                    <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
                                     Buat Laporan
                                 </CardTitle>
-                                <CardDescription>Buat laporan dan ekspor data</CardDescription>
+                                <CardDescription className="text-xs sm:text-sm">
+                                    Buat laporan dan ekspor data
+                                </CardDescription>
                             </CardHeader>
                         </Link>
                     </Card>
